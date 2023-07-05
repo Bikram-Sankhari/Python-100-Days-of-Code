@@ -1,2 +1,3 @@
-secret.env
+*.env
 My Website URL.txt
+/.idea/

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, flash
+from flask import Flask, render_template, redirect, url_for, flash, request
 from flask_bootstrap import Bootstrap
 from flask_ckeditor import CKEditor
 from datetime import date
@@ -10,6 +10,10 @@ from flask_login import UserMixin, login_user, LoginManager, login_required, cur
 from forms import CreatePostForm, RegistrationForm, LoginForm, CommentForm
 from flask_gravatar import Gravatar
 from typing import List
+import ssl, smtplib, os
+from dotenv import load_dotenv
+
+load_dotenv(os.path.abspath("/etc/secrets/secret.env"))
 
 login_manager = LoginManager()
 app = Flask(__name__)
@@ -72,6 +76,22 @@ class Comments(db.Model):
 
 with app.app_context():
     db.create_all()
+
+
+def send_mail_to_user(email):
+    context = ssl.create_default_context()
+    with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as mail:
+        mail.login(os.getenv("MY_EMAIL"), os.getenv("MY_PASSWORD"))
+        mail.sendmail(os.getenv("MY_EMAIL"), email, msg=f"Subject:THANKS FOR YOUR INTEREST\n\nYour message has been "
+                                                        f"received and you will be attended shortly")
+
+
+def send_mail_to_self(name, email, mob, msg):
+    context = ssl.create_default_context()
+    with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as mail:
+        mail.login(os.getenv("MY_EMAIL"), os.getenv("MY_PASSWORD"))
+        mail.sendmail(os.getenv("MY_EMAIL"), os.getenv("MY_EMAIL"),
+                      msg=f"Subject:NEW INTEREST\n\nName: {name}\nE-mail: {email}\nMob: {mob}\nMessage = {msg}")
 
 
 @login_manager.user_loader
@@ -179,8 +199,18 @@ def about():
     return render_template("about.html")
 
 
-@app.route("/contact")
+@app.route("/contact", methods=["GET", "POST"])
 def contact():
+    if request.method == "POST":
+        name = request.form.get("name")
+        email = request.form.get("email")
+        mob = request.form.get("phone")
+        msg = request.form.get("msg")
+
+        send_mail_to_user(email)
+        send_mail_to_self(name=name, email=email, mob=mob, msg=msg)
+
+        return redirect(url_for("get_all_posts"))
     return render_template("contact.html")
 
 

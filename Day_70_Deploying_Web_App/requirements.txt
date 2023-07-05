@@ -11,3 +11,4 @@ Werkzeug
 Flask-SQLAlchemy
 gunicorn
 psycopg2
+python-dotenv
