@@ -1,6 +1,13 @@
-import os
-from dotenv import load_dotenv
+import sys
 
-load_dotenv("secret.env")
+# 👇️ User must press Ctrl + D (Unix) or Ctrl + Z (Windows) to exit
 
-print(os.getenv("name"))
+print('Press CTRL + D (Unix) or CTRL + Z (Windows) to exit')
+
+user_input = sys.stdin.readlines()
+
+# 👇️ get list of lines
+print(user_input)
+
+# 👇️ join the list items into a string
+print(''.join(user_input))
