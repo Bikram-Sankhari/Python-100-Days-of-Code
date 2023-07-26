@@ -30,9 +30,9 @@ def mark_mismatch():
             print(f"At line {i + 1}:: {lines[i]}")
 
             if i > 9:
-                print("             ", end='')
+                print(" "*13, end='')
             else:
-                print("            ", end='')
+                print(" "*12, end='')
 
             for index in range(len(lines[i])):
                 if index in mismatch_index:
