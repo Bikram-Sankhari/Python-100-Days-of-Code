@@ -1,13 +1,26 @@
-import sys
+import tkinter as tk
 
-# 👇️ User must press Ctrl + D (Unix) or Ctrl + Z (Windows) to exit
 
-print('Press CTRL + D (Unix) or CTRL + Z (Windows) to exit')
+def drag_start(event):
+    widget = event.widget
+    widget._drag_start_x = event.x
+    widget._drag_start_y = event.y
 
-user_input = sys.stdin.readlines()
 
-# 👇️ get list of lines
-print(user_input)
+def drag_motion(event):
+    widget = event.widget
+    x = widget.winfo_x() - widget._drag_start_x + event.x
+    y = widget.winfo_y() - widget._drag_start_y + event.y
+    widget.place(x=x, y=y)
 
-# 👇️ join the list items into a string
-print(''.join(user_input))
+
+root = tk.Tk()
+canvas = tk.Canvas(root, width=400, height=400, background='red')
+canvas.pack()
+
+rect = canvas.create_text(10, 10, text="Hello")
+
+canvas.tag_bind(rect, "<Button-1>", drag_start)
+canvas.tag_bind(rect, "<B1-Motion>", drag_motion)
+
+root.mainloop()
