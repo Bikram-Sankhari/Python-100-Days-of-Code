@@ -1,6 +1,5 @@
 import time
 import requests
-from datetime import datetime
 import smtplib
 import ssl
 
